@@ -1,21 +1,666 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Level 1</title>
-    <link rel="stylesheet" href="Style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Abhishek Kumar – Frontend Developer</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --surface: #12121a;
+      --card: #1a1a26;
+      --accent: #6c63ff;
+      --accent2: #ff6584;
+      --accent3: #43e8a0;
+      --text: #e8e8f0;
+      --muted: #8888aa;
+      --border: rgba(108,99,255,0.18);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 300;
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+
+    /* ── BACKGROUND BLOBS ── */
+    .bg-blob {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(120px);
+      opacity: 0.18;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .blob1 { width: 600px; height: 600px; background: var(--accent); top: -200px; left: -200px; }
+    .blob2 { width: 500px; height: 500px; background: var(--accent2); bottom: -150px; right: -150px; }
+    .blob3 { width: 400px; height: 400px; background: var(--accent3); top: 50%; left: 50%; transform: translate(-50%,-50%); }
+
+    /* ── LAYOUT ── */
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 24px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      background: rgba(10,10,15,0.75);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+    }
+    nav .inner {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 24px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .logo {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 1.15rem;
+      letter-spacing: -0.5px;
+      color: var(--text);
+    }
+    .logo span { color: var(--accent); }
+    .nav-links { display: flex; gap: 28px; list-style: none; }
+    .nav-links a {
+      font-size: 0.85rem;
+      color: var(--muted);
+      text-decoration: none;
+      letter-spacing: 0.5px;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--accent); }
+
+    /* ── HERO ── */
+    #hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding-top: 60px;
+    }
+    .hero-inner {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 60px;
+      align-items: center;
+      width: 100%;
+    }
+    .hero-tag {
+      display: inline-block;
+      font-size: 0.72rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--accent);
+      border: 1px solid var(--accent);
+      border-radius: 20px;
+      padding: 4px 14px;
+      margin-bottom: 22px;
+      animation: fadeUp 0.6s ease both;
+    }
+    h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(2.8rem, 7vw, 4.8rem);
+      font-weight: 800;
+      line-height: 1.05;
+      letter-spacing: -2px;
+      animation: fadeUp 0.6s 0.1s ease both;
+    }
+    h1 .line2 { color: var(--accent); }
+    .hero-bio {
+      margin-top: 20px;
+      font-size: 1.05rem;
+      color: var(--muted);
+      max-width: 520px;
+      line-height: 1.7;
+      animation: fadeUp 0.6s 0.2s ease both;
+    }
+    .hero-cta {
+      margin-top: 36px;
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      animation: fadeUp 0.6s 0.3s ease both;
+    }
+    .btn {
+      padding: 12px 28px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.25s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+    }
+    .btn-primary:hover { background: #7b74ff; transform: translateY(-2px); box-shadow: 0 8px 30px rgba(108,99,255,0.35); }
+    .btn-outline {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .btn-outline:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-2px); }
+
+    /* Avatar */
+    .avatar-wrap {
+      animation: fadeUp 0.6s 0.15s ease both;
+    }
+    .avatar {
+      width: 180px;
+      height: 180px;
+      border-radius: 30px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Syne', sans-serif;
+      font-size: 4rem;
+      font-weight: 800;
+      color: white;
+      position: relative;
+      box-shadow: 0 20px 60px rgba(108,99,255,0.35);
+    }
+    .avatar::after {
+      content: '';
+      position: absolute;
+      inset: -3px;
+      border-radius: 33px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      z-index: -1;
+      opacity: 0.4;
+    }
+
+    /* ── CONTACT BAR ── */
+    .contact-bar {
+      display: flex;
+      gap: 20px;
+      margin-top: 30px;
+      flex-wrap: wrap;
+      animation: fadeUp 0.6s 0.35s ease both;
+    }
+    .contact-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+    .contact-item svg { color: var(--accent); flex-shrink: 0; }
+
+    /* ── SECTIONS ── */
+    section { padding: 90px 0; }
+    .section-label {
+      font-size: 0.72rem;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 12px;
+    }
+    h2 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 700;
+      letter-spacing: -1px;
+      margin-bottom: 48px;
+    }
+
+    /* ── EXPERIENCE ── */
+    .exp-list { display: flex; flex-direction: column; gap: 24px; }
+    .exp-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 28px 32px;
+      transition: border-color 0.3s, transform 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+    .exp-card::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 3px;
+      background: linear-gradient(to bottom, var(--accent), var(--accent2));
+      border-radius: 3px 0 0 3px;
+    }
+    .exp-card:hover { border-color: var(--accent); transform: translateX(4px); }
+    .exp-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 6px;
+    }
+    .exp-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.15rem;
+      font-weight: 700;
+    }
+    .exp-meta {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .chip {
+      font-size: 0.72rem;
+      padding: 3px 12px;
+      border-radius: 20px;
+      background: rgba(108,99,255,0.12);
+      color: var(--accent);
+      border: 1px solid rgba(108,99,255,0.25);
+    }
+    .chip.green { background: rgba(67,232,160,0.1); color: var(--accent3); border-color: rgba(67,232,160,0.25); }
+    .exp-company {
+      font-size: 0.9rem;
+      color: var(--muted);
+      margin-bottom: 16px;
+    }
+    .exp-points { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+    .exp-points li {
+      font-size: 0.9rem;
+      color: var(--muted);
+      padding-left: 18px;
+      position: relative;
+      line-height: 1.5;
+    }
+    .exp-points li::before {
+      content: '→';
+      position: absolute;
+      left: 0;
+      color: var(--accent);
+      font-size: 0.8rem;
+    }
+
+    /* ── SKILLS ── */
+    .skills-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .skill-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 28px;
+      transition: all 0.3s;
+    }
+    .skill-card:hover { border-color: var(--accent); transform: translateY(-4px); }
+    .skill-icon {
+      font-size: 2rem;
+      margin-bottom: 14px;
+    }
+    .skill-name {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+    .skill-desc {
+      font-size: 0.85rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+    .skill-bar-wrap {
+      margin-top: 16px;
+      height: 4px;
+      background: var(--surface);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .skill-bar {
+      height: 100%;
+      border-radius: 4px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      animation: growBar 1.2s ease both;
+    }
+    @keyframes growBar { from { width: 0 !important; } }
+
+    /* ── EDUCATION ── */
+    .edu-grid { display: flex; flex-direction: column; gap: 20px; }
+    .edu-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px 28px;
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+      transition: all 0.3s;
+    }
+    .edu-card:hover { border-color: var(--accent3); transform: translateX(4px); }
+    .edu-year {
+      font-family: 'Syne', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--accent3);
+      min-width: 90px;
+      padding-top: 3px;
+      letter-spacing: 0.5px;
+    }
+    .edu-name {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .edu-sub {
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    /* ── INTERESTS ── */
+    .interest-grid { display: flex; flex-wrap: wrap; gap: 14px; }
+    .interest-pill {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 50px;
+      padding: 10px 22px;
+      font-size: 0.88rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: all 0.25s;
+    }
+    .interest-pill:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-2px); }
+    .interest-pill span { font-size: 1.2rem; }
+
+    /* ── LANGUAGES ── */
+    .lang-row { display: flex; gap: 16px; flex-wrap: wrap; }
+    .lang-badge {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 24px;
+      text-align: center;
+      min-width: 110px;
+      transition: all 0.25s;
+    }
+    .lang-badge:hover { border-color: var(--accent2); transform: translateY(-2px); }
+    .lang-name { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1rem; margin-bottom: 4px; }
+    .lang-level { font-size: 0.75rem; color: var(--muted); }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 36px 0;
+      text-align: center;
+    }
+    footer p { font-size: 0.82rem; color: var(--muted); }
+    footer strong { color: var(--accent); font-weight: 500; }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .reveal.visible { opacity: 1; transform: none; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 680px) {
+      .hero-inner { grid-template-columns: 1fr; }
+      .avatar-wrap { display: none; }
+      .skills-grid { grid-template-columns: 1fr; }
+      .nav-links { display: none; }
+    }
+  </style>
 </head>
 <body>
-    <h1>hello from apne college</h1>
-    <h1>hello from apne college</h1>
-    <h1>hello from apne college</h1>
-     <p>This is a paragraph.
-        my name is abhsihek 
-        i am from himachal pradesh
-        i am 20 years old 
-        cureently i am learning web development in navgurukul
-     </p>
-     <button>click me</button>
+
+<!-- BACKGROUND -->
+<div class="bg-blob blob1"></div>
+<div class="bg-blob blob2"></div>
+<div class="bg-blob blob3"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="inner">
+    <div class="logo">Abhishek<span>.</span></div>
+    <ul class="nav-links">
+      <li><a href="#experience">Experience</a></li>
+      <li><a href="#skills">Skills</a></li>
+      <li><a href="#education">Education</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="container">
+    <div class="hero-inner">
+      <div>
+        <div class="hero-tag">Frontend Developer</div>
+        <h1>Abhishek<br><span class="line2">Kumar</span></h1>
+        <p class="hero-bio">
+          A passionate Frontend Developer building clean, structured, and visually attractive websites using HTML &amp; CSS — focused on user-friendly, responsive web interfaces.
+        </p>
+        <div class="contact-bar">
+          <div class="contact-item">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.6 19.79 19.79 0 01.22 1 2 2 0 012.22.22h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7 2 2 0 011.72 2z"/></svg>
+            7876856508
+          </div>
+          <div class="contact-item">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            AbhishekKumar25@navgurukul.org
+          </div>
+          <div class="contact-item">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            Baijnath, Himachal Pradesh
+          </div>
+        </div>
+        <div class="hero-cta">
+          <a href="#experience" class="btn btn-primary">View Work ↓</a>
+          <a href="mailto:AbhishekKumar25@navgurukul.org" class="btn btn-outline">Contact Me</a>
+        </div>
+      </div>
+      <div class="avatar-wrap">
+        <div class="avatar">AK</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EXPERIENCE -->
+<section id="experience">
+  <div class="container">
+    <div class="section-label reveal">Work Experience</div>
+    <h2 class="reveal">Professional <br>Journey</h2>
+    <div class="exp-list">
+
+      <div class="exp-card reveal">
+        <div class="exp-header">
+          <div class="exp-title">Onboarding Coordinator</div>
+          <div class="exp-meta">
+            <span class="chip green">Current</span>
+            <span class="chip">Feb 2026 – Present</span>
+          </div>
+        </div>
+        <div class="exp-company">Navgurukul Foundation · Dharamshala</div>
+        <ul class="exp-points">
+          <li>Managed onboarding process for newly admitted students and their families</li>
+          <li>Explained NGO services, programs, and campus details effectively</li>
+          <li>Guided students from admission stage to campus arrival</li>
+          <li>Handled admission-related queries and ensured smooth transitions</li>
+          <li>Collected, verified, and maintained student onboarding documentation</li>
+          <li>Ensured positive experience through strong communication and support</li>
+        </ul>
+      </div>
+
+      <div class="exp-card reveal">
+        <div class="exp-header">
+          <div class="exp-title">Travel Consultant (Remote Intern)</div>
+          <div class="exp-meta">
+            <span class="chip">Apr 2025 – Jun 2025</span>
+          </div>
+        </div>
+        <div class="exp-company">Travel Never End · Bangalore (Remote)</div>
+        <ul class="exp-points">
+          <li>Managed high-volume customer enquiries and provided travel solutions</li>
+          <li>Delivered excellent customer service via email and WhatsApp</li>
+          <li>Explained travel offers, packages, and pricing to potential customers</li>
+          <li>Handled booking processes, payment follow-ups, and confirmations</li>
+          <li>Resolved customer queries related to tickets, bookings, and services</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills">
+  <div class="container">
+    <div class="section-label reveal">Technical Skills</div>
+    <h2 class="reveal">What I <br>Work With</h2>
+    <div class="skills-grid">
+
+      <div class="skill-card reveal">
+        <div class="skill-icon">🌐</div>
+        <div class="skill-name">HTML</div>
+        <div class="skill-desc">
+          Proficient in building structured web pages using semantic tags — headings, paragraphs, links, images, lists, and tables. I write clean, readable, and well-organized HTML code.
+        </div>
+        <div class="skill-bar-wrap">
+          <div class="skill-bar" style="width: 70%"></div>
+        </div>
+      </div>
+
+      <div class="skill-card reveal">
+        <div class="skill-icon">🎨</div>
+        <div class="skill-name">CSS</div>
+        <div class="skill-desc">
+          Skilled in styling web pages with colors, fonts, spacing, and borders. I understand selectors, classes, and IDs — and can create basic responsive designs and attractive layouts.
+        </div>
+        <div class="skill-bar-wrap">
+          <div class="skill-bar" style="width: 65%"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- EDUCATION -->
+<section id="education">
+  <div class="container">
+    <div class="section-label reveal">Education</div>
+    <h2 class="reveal">Academic <br>Background</h2>
+    <div class="edu-grid">
+
+      <div class="edu-card reveal">
+        <div class="edu-year">Dec 2025 – Present</div>
+        <div>
+          <div class="edu-name">Frontend Development</div>
+          <div class="edu-sub">School of Programming · Navgurukul Campus, Dharamshala</div>
+        </div>
+      </div>
+
+      <div class="edu-card reveal">
+        <div class="edu-year">2021 – 2022</div>
+        <div>
+          <div class="edu-name">Class 12 – HP Board</div>
+          <div class="edu-sub">Gurukul Public Sr. Sec. School · Baijnath</div>
+        </div>
+      </div>
+
+      <div class="edu-card reveal">
+        <div class="edu-year">2019 – 2020</div>
+        <div>
+          <div class="edu-name">Class 10 – HP Board</div>
+          <div class="edu-sub">Gurukul Public Sec. School · Baijnath</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- INTERESTS -->
+<section>
+  <div class="container">
+    <div class="section-label reveal">Interests & Languages</div>
+    <h2 class="reveal">Beyond the <br>Screen</h2>
+
+    <div class="interest-grid reveal" style="margin-bottom: 40px;">
+      <div class="interest-pill"><span>💻</span> Web Development (HTML, CSS)</div>
+      <div class="interest-pill"><span>🧠</span> Logical Problem Solving</div>
+      <div class="interest-pill"><span>📊</span> Flowcharts & Logical Thinking</div>
+      <div class="interest-pill"><span>📚</span> Continuous Learning</div>
+    </div>
+
+    <div class="lang-row reveal">
+      <div class="lang-badge">
+        <div class="lang-name">English</div>
+        <div class="lang-level">Proficient</div>
+      </div>
+      <div class="lang-badge">
+        <div class="lang-name">Hindi</div>
+        <div class="lang-level">Native</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact" style="padding-bottom: 40px;">
+  <div class="container">
+    <div class="section-label reveal">Get In Touch</div>
+    <h2 class="reveal">Let's Connect</h2>
+    <div style="display:flex; gap:16px; flex-wrap:wrap;" class="reveal">
+      <a href="mailto:AbhishekKumar25@navgurukul.org" class="btn btn-primary">
+        📧 AbhishekKumar25@navgurukul.org
+      </a>
+      <a href="tel:7876856508" class="btn btn-outline">
+        📞 7876856508
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <p>Designed &amp; Built by <strong>Abhishek Kumar</strong> · Frontend Developer · Navgurukul</p>
+  </div>
+</footer>
+
+<script>
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) {
+        e.target.style.transitionDelay = (i % 4) * 0.08 + 's';
+        e.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.1 });
+  reveals.forEach(el => observer.observe(el));
+</script>
 </body>
 </html>
